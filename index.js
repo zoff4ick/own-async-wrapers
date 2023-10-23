@@ -20,10 +20,19 @@ const asyncify = (f) => {
 
 // Convert callback-last function to Promise-returning
 const promisify = (f) => {
+  if (typeof f !== 'function') throw new Error('f must be a function');
+
   return (...args) => {
+    const wrappyArgsNumberWithoutCallback = f.length - 1;
+    if (args.length !== wrappyArgsNumberWithoutCallback) {
+      throw new Error('Wrong number of arguments');
+    }
+
     return new Promise((res, rej) => {
       const callBack = (err, data) => {
-        if (err) return rej(err);
+        if (err) {
+          return rej(err);
+        }
         return res(data);
       };
 
